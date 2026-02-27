@@ -23,17 +23,10 @@ export interface IdentifyResponse {
   secondaryContactIds: number[];
 }
 
-const selectContactsStmt = db.prepare<Contact[]>(
+const selectContactsStmt = db.prepare(
   `SELECT id, phoneNumber, email, linkedId, linkPrecedence, createdAt, updatedAt, deletedAt
    FROM Contact
    WHERE (email = @email OR phoneNumber = @phoneNumber)
-     AND (deletedAt IS NULL)`
-);
-
-const selectByIdsStmt = db.prepare<Contact[]>(
-  `SELECT id, phoneNumber, email, linkedId, linkPrecedence, createdAt, updatedAt, deletedAt
-   FROM Contact
-   WHERE id IN ($ids)
      AND (deletedAt IS NULL)`
 );
 
@@ -70,7 +63,7 @@ export function identify(input: IdentifyInput): IdentifyResponse {
   const initialMatches = selectContactsStmt.all({
     email,
     phoneNumber,
-  } as any) as unknown as Contact[];
+  } as any) as Contact[];
 
   if (initialMatches.length === 0) {
     const info = insertContactStmt.run({
@@ -99,7 +92,7 @@ export function identify(input: IdentifyInput): IdentifyResponse {
     allContactsMap.set(c.id, c);
     if (c.linkedId) {
       const linked = db
-        .prepare<Contact>(
+        .prepare(
           `SELECT id, phoneNumber, email, linkedId, linkPrecedence, createdAt, updatedAt, deletedAt
            FROM Contact
            WHERE id = ? AND deletedAt IS NULL`
@@ -118,13 +111,13 @@ export function identify(input: IdentifyInput): IdentifyResponse {
     if (ids.length === 0) break;
 
     const placeholders = ids.map(() => "?").join(",");
-    const stmt = db.prepare<Contact[]>(
+    const stmt = db.prepare(
       `SELECT id, phoneNumber, email, linkedId, linkPrecedence, createdAt, updatedAt, deletedAt
        FROM Contact
        WHERE (id IN (${placeholders}) OR linkedId IN (${placeholders}))
          AND deletedAt IS NULL`
     );
-    const rows = stmt.all(...ids, ...ids) as unknown as Contact[];
+    const rows = stmt.all(...ids, ...ids) as Contact[];
     for (const row of rows) {
       if (!allContactsMap.has(row.id)) {
         allContactsMap.set(row.id, row);
