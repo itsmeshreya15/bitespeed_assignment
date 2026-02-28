@@ -153,13 +153,22 @@ Render automatically sets `PORT` using `process.env.PORT`.
 
 ## 📸 Screenshots
 
-### ✅ Successful API Response (Postman)
+### 1️⃣ API Response – First Request
 
-![Postman Success](./screenshots/postman-success.png)
+![API Response 1](./screenshots/ass-1.png)
+
+---
+
+### 2️⃣ API Response – Second Request
+
+![API Response 2](./screenshots/ass-2.png)
+
+---
 
 ### ☁ Render Deployment
 
-![Render Deployment](./screenshots/render-deployment.png)
+![API Response 3](./screenshots/ass-3.png)
+
 
 ---
 
