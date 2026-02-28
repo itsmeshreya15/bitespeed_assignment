@@ -1,46 +1,47 @@
-## Bitespeed Backend Task – Identity Reconciliation
+# 🚀 Bitespeed Backend Task – Identity Reconciliation
 
-This is a Node.js + TypeScript implementation of the Bitespeed identity reconciliation backend task.
-It exposes a single endpoint `/identify` that consolidates customer identities across multiple orders,
-following the rules described in the task PDF.
+This project is a **Node.js + TypeScript** implementation of the Bitespeed Backend Task for Identity Reconciliation.
 
-### Tech stack
+It exposes a single endpoint:
+
+```
+POST /identify
+```
+
+that consolidates customer identities across multiple purchases based on email and phone number matching rules.
+
+---
+
+## 🌐 Live Hosted API
+
+**Base URL**
+
+https://bitespeed-assignment-l8a5.onrender.com
+
+**Endpoint**
+
+```
+POST https://bitespeed-assignment-l8a5.onrender.com/identify
+```
+
+---
+
+## 🛠 Tech Stack
 
 - Node.js (TypeScript)
 - Express
-- SQLite via `better-sqlite3`
+- SQLite (better-sqlite3)
+- Render (Cloud Deployment)
 
-### Project structure
+---
 
-- `src/server.ts` – Express app and `/identify` route
-- `src/contactService.ts` – Identity reconciliation logic
-- `src/db.ts` – SQLite database setup (`contacts.db`)
+## 📡 API Usage
 
-### Running locally
+### Request
 
-1. Install dependencies:
+**POST /identify**
 
-```bash
-npm install
-```
-
-2. Start the dev server:
-
-```bash
-npm run dev
-```
-
-3. The API will be available at:
-
-```text
-http://localhost:3000/identify
-```
-
-### `/identify` endpoint
-
-- **Method**: `POST`
-- **URL**: `/identify`
-- **Body (JSON)**:
+Content-Type: `application/json`
 
 ```json
 {
@@ -49,74 +50,123 @@ http://localhost:3000/identify
 }
 ```
 
-- **Response (example)**:
+---
+
+### Response
 
 ```json
 {
   "contact": {
     "primaryContactId": 1,
-    "emails": ["lorraine@hillvalley.edu", "mcfly@hillvalley.edu"],
-    "phoneNumbers": ["123456"],
+    "emails": [
+      "lorraine@hillvalley.edu",
+      "mcfly@hillvalley.edu"
+    ],
+    "phoneNumbers": [
+      "123456"
+    ],
     "secondaryContactIds": [2]
   }
 }
 ```
 
+---
+
+## 🧠 Business Logic Summary
+
 The service:
 
-- Creates a **primary** contact when no existing contact matches.
-- Creates **secondary** contacts when new information is added for an existing identity.
-- Ensures there is always **one canonical primary** per identity (oldest contact).
-- Returns all unique emails, phone numbers, and secondary contact IDs for that primary.
+- Creates a **primary contact** if no match exists
+- Creates a **secondary contact** if new information matches an existing identity
+- Maintains the **oldest contact as the canonical primary**
+- Merges multiple identities when overlap is detected
+- Returns:
+  - Primary Contact ID
+  - All unique emails
+  - All unique phone numbers
+  - All secondary contact IDs
 
-### Example Postman requests
+---
 
-1. First order:
+## 🧪 Example Test Cases
+
+### 1️⃣ First Order
 
 ```json
-POST http://localhost:3000/identify
 {
   "email": "lorraine@hillvalley.edu",
   "phoneNumber": "123456"
 }
 ```
 
-2. Second order with same phone, new email:
+### 2️⃣ Same Phone, New Email
 
 ```json
-POST http://localhost:3000/identify
 {
   "email": "mcfly@hillvalley.edu",
   "phoneNumber": "123456"
 }
 ```
 
-3. Lookup by only phone:
+### 3️⃣ Lookup Using Only Phone
 
 ```json
-POST http://localhost:3000/identify
 {
   "phoneNumber": "123456"
 }
 ```
 
-All of these should return the same consolidated `contact` object.
+All return the same consolidated contact object.
 
-### Deploying to Render
+---
 
-1. **Push this project to GitHub.**
-2. Go to Render (`https://render.com`) → **New** → **Web Service**.
-3. Connect your GitHub repo and select this project.
-4. Use these settings:
-   - **Environment**: Node
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm start`
-5. Render will set `PORT` automatically – the app already reads `process.env.PORT`, so no change is needed.
-6. After deployment, you will get a URL like:
+## ▶ Running Locally
 
-```text
-https://your-service-name.onrender.com/identify
+```bash
+npm install
+npm run dev
 ```
 
-Use this URL in your submission form and in this README if required.
+Runs at:
 
+```
+http://localhost:3000/identify
+```
+
+---
+
+## ☁ Deployment (Render)
+
+- Environment: Node
+- Build Command:
+  ```
+  npm install && npm run build
+  ```
+- Start Command:
+  ```
+  npm start
+  ```
+
+Render automatically sets `PORT` using `process.env.PORT`.
+
+---
+
+## 📸 Screenshots
+
+### ✅ Successful API Response (Postman)
+
+![Postman Success](./screenshots/postman-success.png)
+
+### ☁ Render Deployment
+
+![Render Deployment](./screenshots/render-deployment.png)
+
+---
+
+## 📌 Submission Links
+
+Hosted Endpoint:
+https://bitespeed-assignment-l8a5.onrender.com/identify
+
+GitHub Repository:
+(Add your repository link here)
